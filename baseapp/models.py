@@ -30,5 +30,8 @@ class Message(models.Model):
     update = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-update', '-created'] #dash is to invert order
+    
     def __str__(self):
         return self.body[0:50]

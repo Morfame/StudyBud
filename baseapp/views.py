@@ -60,19 +60,23 @@ def registerPage(request):
 
 def home(request):
     qry = request.GET.get('qry') if request.GET.get('qry') != None else ''
+
     rooms = Room.objects.filter(
         Q(topic__name__icontains=qry) |  # i contains means not case sensitive many other options to research
         Q(name__icontains=qry) | #& additionally | means or
         Q(description__icontains=qry)
         )
+    
     topics = Topic.objects.all() #filter how many you want to see in side bar by most content of other such things
     room_count = rooms.count()
-    context = {'rooms': rooms, 'topics': topics, 'room_count': room_count}
+    room_messages = Message.objects.all() #set filter here if nexessary
+
+    context = {'rooms': rooms, 'topics': topics, 'room_count': room_count, 'room_messages': room_messages}
     return render(request, 'baseapp/home.html', context)
 
 def room(request, pk):
     room = Room.objects.get(id=pk)
-    room_messages = room.message_set.all().order_by('-created')
+    room_messages = room.message_set.all()
     participants = room.participants.all()
 
     if request.method =='POST':
