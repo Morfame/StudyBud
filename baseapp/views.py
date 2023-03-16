@@ -106,7 +106,9 @@ def createRoom(request):
     if request.method == 'POST':
         form = RoomForm(request.POST)
         if form.is_valid():
-            form.save()
+            room = form.save(commit=False)
+            room.host = request.user
+            room.save()
             return redirect('home')
 
     context = {'form': form}
@@ -114,7 +116,7 @@ def createRoom(request):
 
 @login_required(login_url='login')
 def updateRoom(request, pk):
-    room = Room.objects.get(id=pk)
+    room = Room.objects.get(id=pk) 
     form = RoomForm(instance=room)
 
     if request.user != room.host:
